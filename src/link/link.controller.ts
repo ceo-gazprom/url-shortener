@@ -11,7 +11,7 @@ import {
 import { ApiMovedPermanentlyResponse, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { LinkService } from './link.service';
-//import { ShortLinkDto, LongLinkDto } from './dto/short-link.dto';
+import { LongLinkDto } from './dto/long-link.dto';
 import { ShortenerResponse } from './interfaces/link-response.interface';
 import { ErrorResponse } from './classes/response.class';
 
@@ -26,11 +26,16 @@ export class LinkController {
     description: 'Exception: not exist short link.',
     type: ErrorResponse,
   })
+  @ApiResponse({
+    status: 400,
+    description: 'Exception: bad short link.',
+    type: ErrorResponse,
+  })
   async redirect(@Param('urlCode') shortLink: string, @Res() res: Response) {
-    console.log(shortLink);
-    const validation = this.linkService.validateShortLink(shortLink);
-    console.log(validation);
-    if (!validation) {
+    /** Validate incoming param */
+    const isValidate = this.linkService.validateShortLink(shortLink);
+
+    if (!isValidate) {
       throw new HttpException(
         {
           status: 'error',
@@ -54,10 +59,8 @@ export class LinkController {
   }
 
   @Post('create')
-  @ApiResponse({
-    status: 500,
-    description: 'Internal Server Error',
-    type: ErrorResponse,
-  })
-  createShortLink(@Body() body: any) {}
+  async createShortLink(@Body() body: LongLinkDto) {
+    const shortUrl = await this.linkService.createShort(body.longLink);
+    return { status: 'success', shortLink: shortUrl };
+  }
 }
