@@ -7,6 +7,9 @@ import {
   Body,
   HttpException,
   HttpStatus,
+  UseInterceptors,
+  CacheInterceptor,
+  CacheTTL,
 } from '@nestjs/common';
 import { ApiMovedPermanentlyResponse, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -16,6 +19,8 @@ import { ShortenerResponse } from './interfaces/link-response.interface';
 import { ErrorResponse } from './classes/response.class';
 
 @Controller()
+@CacheTTL(10)
+@UseInterceptors(CacheInterceptor)
 export class LinkController {
   constructor(private readonly linkService: LinkService) {}
 

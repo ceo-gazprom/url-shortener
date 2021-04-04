@@ -47,6 +47,11 @@ export class LinkService implements LinkServiceInterface {
     return result.long;
   }
 
+  /**
+   * Validate short url
+   * @param urlCode - short url
+   * @returns result of validation
+   */
   public validateShortLink(urlCode: string): boolean {
     if (typeof urlCode == 'string' && urlCode.length == 10) return true;
     return false;
