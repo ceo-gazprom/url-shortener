@@ -12,7 +12,6 @@ import { ApiMovedPermanentlyResponse, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { LinkService } from './link.service';
 import { LongLinkDto } from './dto/long-link.dto';
-import { ShortenerResponse } from './interfaces/link-response.interface';
 import { ErrorResponse } from './classes/response.class';
 
 @Controller()

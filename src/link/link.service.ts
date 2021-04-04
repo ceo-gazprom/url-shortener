@@ -45,7 +45,6 @@ export class LinkService implements LinkServiceInterface {
 
     /** Check cache */
     const cached = await this.redisCacheService.get(shortUrl);
-    console.log('cache:', cached);
     if (cached && cached !== null) return cached;
 
     const result = await this.linkRepository.getByShort(shortUrl);
