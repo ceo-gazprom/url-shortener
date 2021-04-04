@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import validator from 'validator';
-import shortId from 'shortid';
+import { nanoid } from 'nanoid';
 
 import { LinkServiceInterface } from './interfaces/link-service.interface';
 import { LinkRepository } from '../repository/link.repository';
@@ -27,6 +26,7 @@ export class LinkService implements LinkServiceInterface {
 
     /** Create new link in the DB */
     const shortLink = this.generateUrlCode();
+    console.log(shortLink);
     const result = await this.linkRepository.createLink(longLink, shortLink);
     if (!result) return undefined;
 
@@ -47,19 +47,8 @@ export class LinkService implements LinkServiceInterface {
     return result.long;
   }
 
-  public validateLongLink(link: string): boolean {
-    if (
-      validator.isEmail(link) &&
-      typeof link == 'string' &&
-      link.length > 11 &&
-      link.length < 255
-    )
-      return true;
-    return false;
-  }
-
   public validateShortLink(urlCode: string): boolean {
-    if (typeof urlCode == 'string' && urlCode.length == 6) return true;
+    if (typeof urlCode == 'string' && urlCode.length == 10) return true;
     return false;
   }
 
@@ -68,6 +57,6 @@ export class LinkService implements LinkServiceInterface {
    * @returns url code
    */
   private generateUrlCode(): string {
-    return shortId.generate();
+    return nanoid(10);
   }
 }
