@@ -4,12 +4,14 @@ import { nanoid } from 'nanoid';
 
 import { LinkServiceInterface } from './interfaces/link-service.interface';
 import { LinkRepository } from '../repository/link.repository';
+import { RedisCacheService } from '../services/redis-cachce/redis-cache.service';
 
 @Injectable()
 export class LinkService implements LinkServiceInterface {
   constructor(
     @InjectRepository(LinkRepository)
     private readonly linkRepository: LinkRepository,
+    private readonly redisCacheService: RedisCacheService,
   ) {}
 
   /**
@@ -18,6 +20,11 @@ export class LinkService implements LinkServiceInterface {
    * @returns url code for link
    */
   public async createShort(longLink: string): Promise<string> {
+    /** Check cache */
+    const cached = await this.redisCacheService.get(longLink);
+    if (cached) return cached;
+
+    console.log(cached);
     if (!longLink) return undefined;
 
     /** Check if the link exists in the database */
@@ -30,6 +37,8 @@ export class LinkService implements LinkServiceInterface {
     const result = await this.linkRepository.createLink(longLink, shortLink);
     if (!result) return undefined;
 
+    /** Add to cahce */
+    await this.redisCacheService.set(longLink, shortLink);
     return shortLink;
   }
 
