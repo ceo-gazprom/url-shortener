@@ -20,11 +20,6 @@ export class LinkService implements LinkServiceInterface {
    * @returns url code for link
    */
   public async createShort(longLink: string): Promise<string> {
-    /** Check cache */
-    const cached = await this.redisCacheService.get(longLink);
-    if (cached) return cached;
-
-    console.log(cached);
     if (!longLink) return undefined;
 
     /** Check if the link exists in the database */
@@ -37,8 +32,6 @@ export class LinkService implements LinkServiceInterface {
     const result = await this.linkRepository.createLink(longLink, shortLink);
     if (!result) return undefined;
 
-    /** Add to cahce */
-    await this.redisCacheService.set(longLink, shortLink);
     return shortLink;
   }
 
@@ -50,8 +43,16 @@ export class LinkService implements LinkServiceInterface {
   public async getLongByShort(shortUrl: string): Promise<string> {
     if (!shortUrl) return undefined;
 
+    /** Check cache */
+    const cached = await this.redisCacheService.get(shortUrl);
+    console.log('cache:', cached);
+    if (cached && cached !== null) return cached;
+
     const result = await this.linkRepository.getByShort(shortUrl);
     if (!result) return undefined;
+
+    /** Add to cahce */
+    await this.redisCacheService.set(shortUrl, result.long);
 
     return result.long;
   }
