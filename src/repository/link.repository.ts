@@ -15,8 +15,7 @@ export class LinkRepository
     if (!short) return undefined;
 
     try {
-      const result = await this.update({ short }, { count: () => 'count + 1' });
-      console.log(result);
+      await this.update({ short }, { count: () => 'count + 1' });
     } catch (error) {
       throw new Error('[LinkRepository.createLink] - SQL');
     }

@@ -28,7 +28,6 @@ export class LinkService implements LinkServiceInterface {
 
     /** Create new link in the DB */
     const shortLink = this.generateUrlCode();
-    console.log(shortLink);
     await this.linkRepository.createLink(longLink, shortLink);
 
     return shortLink;
