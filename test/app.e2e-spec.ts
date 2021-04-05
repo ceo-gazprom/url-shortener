@@ -1,11 +1,11 @@
 import * as request from 'supertest';
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppModule } from '../src/app.module';
 import { INestApplication } from '@nestjs/common';
+import { AppModule } from '../src/app.module';
 
 describe('Cats', () => {
   let app: INestApplication;
-  const catsService = { findAll: () => ['test'] };
+  let shortLink = undefined;
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,10 +16,30 @@ describe('Cats', () => {
     await app.init();
   });
 
-  it(`/GET cats`, () => {
-    return request(app.getHttpServer()).get('/cats').expect(200).expect({
-      data: catsService.findAll(),
-    });
+  it(`/Post create short link`, () => {
+    return request(app.getHttpServer())
+      .post('/create')
+      .send({
+        longLink: 'https://yandex.ru',
+      })
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .expect(201)
+      .then((response) => {
+        shortLink = response.body.shortLink;
+      });
+  });
+
+  it(`/Get redirect to link`, () => {
+    return request(app.getHttpServer())
+      .get(`/${shortLink}`)
+      .expect(302)
+      .then((response) => {
+        console.assert(
+          response.text,
+          'Found. Redirecting to https://yandex.ru',
+        );
+      });
   });
 
   afterAll(async () => {
