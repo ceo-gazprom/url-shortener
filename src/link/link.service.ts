@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { nanoid } from 'nanoid';
 
-import { LinkServiceInterface } from './interfaces/link-service.interface';
+import { LinkServiceInterface } from './link-service.interface';
 import { LinkRepository } from '../repository/link.repository';
 import { RedisCacheService } from '../services/redis-cachce/redis-cache.service';
 
@@ -29,8 +29,7 @@ export class LinkService implements LinkServiceInterface {
     /** Create new link in the DB */
     const shortLink = this.generateUrlCode();
     console.log(shortLink);
-    const result = await this.linkRepository.createLink(longLink, shortLink);
-    if (!result) return undefined;
+    await this.linkRepository.createLink(longLink, shortLink);
 
     return shortLink;
   }
@@ -45,13 +44,19 @@ export class LinkService implements LinkServiceInterface {
 
     /** Check cache */
     const cached = await this.redisCacheService.get(shortUrl);
-    if (cached && cached !== null) return cached;
+    if (cached !== undefined && cached !== null) {
+      /** Increase clicks counter  */
+      await this.linkRepository.addClick(shortUrl);
+      return cached;
+    }
 
     const result = await this.linkRepository.getByShort(shortUrl);
     if (!result) return undefined;
 
     /** Add to cahce */
     await this.redisCacheService.set(shortUrl, result.long);
+    /** Increase clicks counter  */
+    await this.linkRepository.addClick(result.short);
 
     return result.long;
   }
