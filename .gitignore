@@ -105,3 +105,6 @@ dist
 
 #postgres
 pgdata/
+
+#Mac OS cash
+.DS_Store
