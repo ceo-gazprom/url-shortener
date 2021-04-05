@@ -31,32 +31,28 @@ describe('LinkController', () => {
       };
 
       const result = await linkController.redirect('abcdeabcde');
-      console.log(result);
       expect(result).toEqual(response);
     });
 
     it('Should return bad short link', async () => {
-      const response = new HttpException(
+      const ErrorTypeException = new HttpException(
         'Exception: bad short link.',
         HttpStatus.BAD_REQUEST,
       );
-      try {
-        await linkController.redirect('a');
-      } catch (error) {
-        expect(error).toEqual(response);
-      }
+      await expect(() => linkController.redirect('a')).rejects.toThrow(
+        ErrorTypeException,
+      );
     });
 
     it('Should return not exist short link', async () => {
-      const response = new HttpException(
+      const ErrorTypeException = new HttpException(
         'Exception: not exist short link.',
         HttpStatus.NOT_FOUND,
       );
-      try {
-        await linkController.redirect('aaaaabbbbb');
-      } catch (error) {
-        expect(error).toEqual(response);
-      }
+
+      await expect(() => linkController.redirect('aaaaabbbbb')).rejects.toThrow(
+        ErrorTypeException,
+      );
     });
   });
 
@@ -84,7 +80,6 @@ describe('LinkController', () => {
       try {
         await linkController.createShortLink(body);
       } catch (error) {
-        console.log(error);
         expect(error).toEqual(response);
       }
     });
