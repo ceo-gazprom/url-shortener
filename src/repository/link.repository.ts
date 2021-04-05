@@ -1,24 +1,40 @@
 import { Repository, EntityRepository } from 'typeorm';
 import { LinkEntity } from '../entities/link.entity';
+import { LinkRepositoryInterface } from './link-repository.interface';
 
 @EntityRepository(LinkEntity)
-export class LinkRepository extends Repository<LinkEntity> {
+export class LinkRepository
+  extends Repository<LinkEntity>
+  implements LinkRepositoryInterface {
+  /**
+   * Increase clicks counter
+   * @param short - url code
+   * @returns void
+   */
+  async addClick(short: string): Promise<void> {
+    if (!short) return undefined;
+
+    try {
+      const result = await this.update({ short }, { count: () => 'count + 1' });
+      console.log(result);
+    } catch (error) {
+      throw new Error('[LinkRepository.createLink] - SQL');
+    }
+  }
   /**
    * Add new link to the DB
    * @param long - url link
    * @param short - url code
    * @returns result of adding to the database
    */
-  async createLink(long: string, short: string): Promise<boolean> {
-    if (!long || !short || short.length < 6) return false;
+  async createLink(long: string, short: string): Promise<void> {
+    if (!long || !short || short.length < 6) return undefined;
 
     try {
       await this.insert({ long, short });
     } catch (error) {
-      console.error('[LinkRepository.createLink] - SQL', error);
-      return false;
+      throw new Error('[LinkRepository.createLink] - SQL');
     }
-    return true;
   }
 
   /**
@@ -33,8 +49,7 @@ export class LinkRepository extends Repository<LinkEntity> {
     try {
       result = await this.findOne({ short });
     } catch (error) {
-      console.error('[LinkRepository.getByShort] - SQL', error);
-      return undefined;
+      throw new Error('[LinkRepository.getByShort] - SQL');
     }
     return result;
   }
@@ -51,8 +66,7 @@ export class LinkRepository extends Repository<LinkEntity> {
     try {
       result = await this.findOne({ long });
     } catch (error) {
-      console.error('[LinkRepository.getByLong] - SQL', error);
-      return undefined;
+      throw new Error('[LinkRepository.getByLong] - SQL');
     }
     return result;
   }
