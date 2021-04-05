@@ -16,4 +16,10 @@ export class LinkEntity extends BaseEntity {
     unique: true,
   })
   short: string;
+
+  @Column({
+    type: 'int',
+    default: 0,
+  })
+  count: number;
 }
