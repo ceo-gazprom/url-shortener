@@ -14,7 +14,7 @@
 
 - [X] node.js >= 12;
 - [X] TypeScript;
-- [X] Можно использовать любой фреймворк на выбор – fastify, express, Inversify, <b>NestJS<b>;
+- [X] Можно использовать любой фреймворк на выбор – fastify, express, Inversify, <b>NestJS</b>;
 - [X] БД – любая, предпочтительно Postgres;
 - [X] Написать юнит тесты;
 - [X] Обернуть сервис в docker, чтобы запускался в docker-compose;
