@@ -22,3 +22,40 @@
 - [X] (Опционально) добавить кэширование(in-memory/<b>redis</b> – любое на выбор);
 
 Оформленный код выложить на github. Написать readme для запуска сервиса и теста/тестов.
+
+------
+
+### Запуск приложения
+Переименовать **.envexample** в **.env**
+
+**Dev:**
+```
+npm run up:dev
+
+yarn up:dev
+```
+
+**Prod:**
+```
+npm run up:prod
+
+yarn up:prod
+```
+
+**Tests:**
+```
+npm install
+npm run test
+
+yarn install
+yarn test
+```
+
+**E2E tests:**
+```
+npm install
+npm run test:e2e
+
+yarn install
+yarn test:e2e
+```
