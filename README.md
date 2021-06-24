@@ -1,4 +1,4 @@
-# Raiffeisen test: Url shortener
+#  Test: Url shortener
 
 Необходимо написать сервис сокращения ссылок.
 
